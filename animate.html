@@ -1,0 +1,117 @@
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Animation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    div {
+      width: 1000px;
+      height: 500px;
+      background-color: #fbf9eb;
+    }
+    img {
+      transform: translate(50px, 380px);
+    }
+  </style>
+  <script src="js/jquery.js"></script>
+</head>
+<body>
+  <div>
+    <img id="mario" src="images/mario_1.png">
+  </div>
+
+  <script>
+        const target = document.getElementById('mario'); // アニメーションの対象
+        const startY = 380; // Y座標の始点
+        const diffX = 10; // X座標の変化量
+        const diffY = 0; // Y座標の変化量
+        const time = 1000; // 変化にかける時間 (ミリ秒)
+        var startX = 50; // X座標の始点
+        let progress = 0;
+        
+    jQuery(function($) {
+        $(window).keydown(function(e){
+            // ←キー
+            if(e.keyCode == 37){
+                pos = $('#mario').offset();
+                startX = pos.left - diffX;
+
+                // 画像切り替え
+                $('#mario').attr('src', 'images/mario_5.png');
+                
+                if(pos.left > 0){
+                    // 左方向へ移動
+                    requestAnimationFrame(updateLeft);
+                }
+            }
+            
+            // →キー
+            if(e.keyCode == 39){
+                pos = $('#mario').offset();
+                startX = pos.left + diffX;
+
+                // 画像切り替え
+                $('#mario').attr('src', 'images/mario_2.png');
+                
+                if(pos.left < (1000 - $('#mario').width())){
+                    // →方向へ移動
+                    requestAnimationFrame(updateRight);
+                }
+            }
+        });
+        
+        // キーボードを離したタイミングで画像を静止画へ切り替える
+        $(window).keyup(function(e){
+            // ←キー
+            if(e.keyCode == 37){
+                $('#mario').attr('src', 'images/mario_4.png');
+            }
+            // →キー
+            if(e.keyCode == 39){
+                $('#mario').attr('src', 'images/mario_1.png');
+            }
+        });
+    });
+
+    // 右へ移動
+    function updateRight(timestanp) {
+      // 進捗率を算出
+      progress = timestanp / time;
+      // 進捗率が100%を超えないよう丸める
+      progress = Math.min(progress, 1);
+
+      // 値を算出し反映する
+      const resultX = startX + diffX * progress; // X座標
+      const resultY = startY + diffY * progress; // Y座標
+      target.style.transform = `translate( ${resultX}px, ${resultY}px )`;
+
+      // 進捗が1未満の場合はアップデートを再実行する
+      if (progress < 1) {
+        requestAnimationFrame(updateRight);
+      }
+    }
+    
+    // 左へ移動
+    function updateLeft(timestanp) {
+      // 進捗率を算出
+      progress = timestanp / time;
+      // 進捗率が100%を超えないよう丸める
+      progress = Math.min(progress, 1);
+
+      // 値を算出し反映する
+      const resultX = startX - diffX * progress; // X座標
+      const resultY = startY + diffY * progress; // Y座標
+      target.style.transform = `translate( ${resultX}px, ${resultY}px )`;
+
+      // 進捗が1未満の場合はアップデートを再実行する
+      if (progress < 1) {
+        requestAnimationFrame(updateLeft);
+      }
+    }
+  </script>
+</body>
+</html>
